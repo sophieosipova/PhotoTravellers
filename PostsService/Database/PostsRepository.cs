@@ -64,24 +64,25 @@ namespace PostsService.Database
 
         }
 
-        public async Task<bool> DeletePost(int postId)
+        public async Task<Post> DeletePost(int postId)
         {
             var post = db.Posts.SingleOrDefault(x => x.PostId == postId);
 
             if (post == null)
-                return false;
+                return null;
 
             try
             {
                 db.Posts.Remove(post);
                 await db.SaveChangesAsync();
+                return post;
             }
             catch
             {
-                return false;
+                return null;
             }
 
-            return true;
+            
         }
 
 
