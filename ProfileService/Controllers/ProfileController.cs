@@ -69,7 +69,7 @@ namespace ProfileService.Controllers
         [HttpPost]
         [Route("")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateComment(Profile profile)
+        public async Task<IActionResult> CreateProfile(Profile profile)
         {
             var p = await profilesRepository.CreateProfile(profile);
 

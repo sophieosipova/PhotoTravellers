@@ -84,7 +84,7 @@ namespace PostsService.Controllers
         [Route("profile/{profileId}/post/{postId:int}")]
         [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> DeleteProduct(string profileId, int postId)
+        public async Task<IActionResult> DeletePost(string profileId, int postId)
         {
             if (await postsRepository.DeletePost(postId) != null)
                 return NotFound();
@@ -96,7 +96,7 @@ namespace PostsService.Controllers
         [Route("profile/{profileId}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> UpdateProduct(string profileId, [FromBody] Post postToUpdate)
+        public async Task<IActionResult> UpdatePost(string profileId, [FromBody] Post postToUpdate)
         {
             var post = await postsRepository.UpdatePost(postToUpdate);
 
