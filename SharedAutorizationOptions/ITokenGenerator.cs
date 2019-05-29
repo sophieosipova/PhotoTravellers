@@ -9,7 +9,9 @@ namespace SharedAutorizationOptions
         string GenerateRefreshToken(string id, string userName);
 
         string GenerateAccessToken(string id, string userName);
-        bool ValidateToken(string token);
-        string GetUsernameFromToken(string token);
+        bool ValidateAccessToken(string token);
+
+        bool ValidateRefreshToken(string token);
+        //  string GetUsernameFromToken(string token);
     }
 }

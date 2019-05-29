@@ -11,7 +11,7 @@ namespace AuthorizationService.Models
     public class BaseContext : IdentityDbContext
     {
         new public DbSet<IdentityUser> Users { get; set; }
-        // public DbSet<AppAccount> Apps { get; set; }
+        new public DbSet<IdentityRole> Roles { get; set; }
         public BaseContext(DbContextOptions options) : base(options)
         {
             Database.EnsureCreated();
