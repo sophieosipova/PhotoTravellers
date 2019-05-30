@@ -28,7 +28,7 @@ namespace AuthorizationService.Controllers
 
         public AuthorizationController(
 
-            TokenGenerator tokenGenerator,
+            ITokenGenerator tokenGenerator,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             RoleManager<IdentityRole> roleManager
@@ -59,10 +59,16 @@ namespace AuthorizationService.Controllers
             {
                 var user = new IdentityUser { UserName = "Sophie" };
                 var result = await userManager.CreateAsync(user, "qwe123456");
-                await userManager.AddClaimAsync(user, new Claim("userName", user.UserName));
+                await userManager.AddClaimAsync(user, new Claim("UserName", user.UserName));
+                await userManager.AddClaimAsync(user, new Claim("Role", "Admin"));
                 var app = new IdentityUser { UserName = "Polina" };
                 var result1 = await userManager.CreateAsync(app, "qwe123456");
                 await userManager.AddClaimAsync(app, new Claim("userName", app.UserName));
+                await userManager.AddClaimAsync(user, new Claim("Role", "User"));
+
+                await userManager.AddToRoleAsync(user, "Admin");
+                await userManager.AddToRoleAsync(app, "User");
+
             }
             return Ok(userManager.Users);
         }
@@ -98,5 +104,44 @@ namespace AuthorizationService.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpGet]
+        [Route("admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<bool>> ValidateAdmin()
+        {
+            if (this.User.Identity.IsAuthenticated)
+            {
+
+                string token = Request.Headers["Authorization"].ToString().Remove(0, 7);
+                var user = await userManager.FindByNameAsync(User.Identity.Name/*usersToken.UserName*/);
+
+                if (tokenGenerator.ValidateAccessToken(token))
+                {
+                    return Ok(true);
+                }
+            }
+            return Unauthorized();
+        }
+
+
+
+        [HttpGet]
+        [Route("user")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<bool>> ValidateUser()
+        {
+            if (this.User.Identity.IsAuthenticated)
+            {
+
+                string token = Request.Headers["Authorization"].ToString().Remove(0, 7);
+                var user = await userManager.FindByNameAsync(User.Identity.Name/*usersToken.UserName*/);
+
+                if (tokenGenerator.ValidateAccessToken(token))
+                {
+                    return Ok(true);
+                }
+            }
+            return Unauthorized();
+        }
     }
 }

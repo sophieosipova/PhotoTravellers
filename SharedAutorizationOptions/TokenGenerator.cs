@@ -9,24 +9,26 @@ namespace SharedAutorizationOptions
 {
     public class TokenGenerator : ITokenGenerator
     {
-        private readonly AuthorizationOptions options;
+        private readonly AuthorizationOptions accessOptions;
+        private readonly AuthorizationOptions refreshOptions;
 
 
-        public TokenGenerator(AuthorizationOptions options)
+        public TokenGenerator(AuthorizationOptions accessOptions)
         {
-            this.options = options;
+            this.accessOptions = accessOptions;
+            this.refreshOptions = new AuthorizationOptions { ISSUER = "AuthorizationService", AUDIENCE = "Refreshing", TokenLifetime = 30};
         }
 
         public string GenerateAccessToken(string id, string userName)
         {
-            return this.GenerateJwtToken(id, userName, options.AccessTokenLifetime);
+            return this.GenerateJwtToken(id, userName, accessOptions);
         }
 
         public string GenerateRefreshToken(string id, string userName)
         {
-            return this.GenerateJwtToken(id, userName, options.RefreshTokenLifetime);
+            return this.GenerateJwtToken(id, userName, refreshOptions);
         }
-        private string GenerateJwtToken(string id, string userName, double lifeTime)
+        private string GenerateJwtToken(string id, string userName, AuthorizationOptions options)
         {
             var claims = new[]{
                 new Claim(JwtRegisteredClaimNames.Sub, id),
@@ -43,7 +45,7 @@ namespace SharedAutorizationOptions
             var credits = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 
-            var token = new JwtSecurityToken(options.ISSUER, options.AUDIENCE, claims, expires: DateTime.Now.Add(TimeSpan.FromMinutes(lifeTime)),
+            var token = new JwtSecurityToken(options.ISSUER, options.AUDIENCE, claims, expires: DateTime.Now.Add(TimeSpan.FromMinutes(options.TokenLifetime)),
                 signingCredentials: credits);
 
 
@@ -53,10 +55,27 @@ namespace SharedAutorizationOptions
 
 
 
-        public bool ValidateToken(string token)
+        public bool ValidateAccessToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var validationParameters = options.GetParameters();
+            var validationParameters = accessOptions.GetParameters();
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+        }
+
+        public bool ValidateRefreshToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = refreshOptions.GetParameters();
 
             try
             {
@@ -72,7 +91,7 @@ namespace SharedAutorizationOptions
 
 
 
-        public string GetUsernameFromToken(string token)
+  /*      public string GetUsernameFromToken(string token)
         {
             string username = null;
             ClaimsPrincipal principal = GetPrincipal(token);
@@ -110,7 +129,7 @@ namespace SharedAutorizationOptions
             {
                 return null;
             }
-        }
+        } */
 
     }
 }

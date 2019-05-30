@@ -38,8 +38,6 @@ namespace AuthorizationService
             options.UseSqlServer(Configuration.GetConnectionString("UsersDatabase")));
 
 
-
-
             services.AddIdentity<IdentityUser, IdentityRole>(cfg =>
             {
                 cfg.Password.RequireDigit = false;
@@ -101,9 +99,14 @@ namespace AuthorizationService
             }
 
 
-            app.UseAuthentication();
-            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            app.UseAuthentication();
+
+
+            app.UseCors("CorsPolicy");
             app.UseMvc();
         }
     }
