@@ -40,14 +40,16 @@ namespace ProfileService.Controllers
 
         [HttpDelete]
         [Route("{profileId}")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteProfile(string profileId)
         {
             if (profileId == "")
                 return BadRequest();
 
-            if (await profilesRepository.DeleteProfile(profileId) != null)
-                return NoContent();
+            var profile = await profilesRepository.DeleteProfile(profileId);
+
+            if (profile != null)
+                return Ok(profile);
 
             return NotFound();
         }
@@ -78,6 +80,71 @@ namespace ProfileService.Controllers
 
             return Created("", p);
         }
+
+
+        [HttpGet]
+        [Route("{profileId}/followers")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Profile), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetFolloewers (string profileId)
+        {
+            if (profileId == "")
+                return BadRequest();
+
+            var followers = await profilesRepository.GetFollowers(profileId);
+
+            if (followers != null)
+                return Ok(followers);
+
+            return NotFound();
+        }
+
+        [HttpGet]
+        [Route("{profileId}/followings")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Profile), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetFolloewings(string profileId)
+        {
+            if (profileId == "")
+                return BadRequest();
+
+            var followers = await profilesRepository.GetFollowings(profileId);
+
+            if (followers != null)
+                return Ok(followers);
+
+            return NotFound();
+        }
+
+        [HttpDelete]
+        [Route("{profileId:int}/follow")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> DeleteFollow(int followId)
+        {
+            if (followId == 0)
+                return BadRequest();
+
+            var follow = await profilesRepository.DeleteFollow(followId);
+
+            if (follow != null)
+                return Ok(follow);
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Route("{profileId:int}/follow")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        public async Task<IActionResult> CreateFolow(Follow follow)
+        {
+            var f = await profilesRepository.CreateFollow(follow);
+
+            if (f == null)
+                return Conflict();
+
+            return Created("", f);
+        }
+
 
     }
 }

@@ -12,6 +12,12 @@ namespace ProfileService.Database
         Task<Profile> CreateProfile(Profile profile);
         Task<Profile> DeleteProfile(string profileId);
         Task<Profile> UpdateProfile(Profile profileToUpdate);
-      //  Task<PaginatedModel<Comment>> GetCommentsByDishId(int dishId, int pageSize = 10, int pageIndex = 0);
+
+        Task<List<Follow>> GetFollowers (string profileId);
+        Task<List <Follow>> GetFollowings (string profileId);
+
+        Task<Follow> CreateFollow (Follow follow);
+        Task<Follow> DeleteFollow(int followId);
+        //  Task<PaginatedModel<Comment>> GetCommentsByDishId(int dishId, int pageSize = 10, int pageIndex = 0);
     }
 }

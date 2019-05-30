@@ -9,6 +9,7 @@ namespace ProfileService.Models
     public class ProfilesContext : DbContext
     {
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Follow> Follows { get; set; }
         public ProfilesContext(DbContextOptions<ProfilesContext> options)
             : base(options)
         {

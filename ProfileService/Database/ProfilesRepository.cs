@@ -21,6 +21,12 @@ namespace ProfileService.Database
 
                 db.SaveChanges();
             }
+
+            if (!db.Follows.Any())
+            {
+                db.Follows.Add(new Follow { FollowerId = "d968f867-cd4b-4f2c-915f-fd0bba4a06ba", FollowingId = "asdf43dw-cd4b-4f2c-915f-fd0bba4a06ba" });
+                db.SaveChanges();
+            }
         }
 
         public async Task<Profile > GetProfileById(string profileId)
@@ -109,5 +115,76 @@ namespace ProfileService.Database
             }
 
         }
+
+        public async Task<List<Follow>> GetFollowers (string profileId)
+        {
+            try
+            {
+                return await db.Follows.Where(f => f.FollowingId == profileId).ToListAsync();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<Follow>> GetFollowings(string profileId)
+        {
+            try
+            {
+                return await db.Follows.Where(f => f.FollowerId == profileId).ToListAsync();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<Follow> CreateFollow(Follow follow)
+        {
+            var item = new Follow
+            {
+                FollowerId = follow.FollowerId,
+                FollowingId = follow.FollowingId
+
+            };
+
+            try
+            {
+                db.Follows.Add(item);
+                db.SaveChanges();
+
+                return await db.Follows.LastAsync();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<Follow> DeleteFollow (int followId)
+        {
+            try
+            {
+                var follow = db.Follows.SingleOrDefault(f => f.FollowId == followId);
+
+                if (follow == null)
+                    return null;
+
+                db.Follows.Remove(follow);
+                await db.SaveChangesAsync();
+
+                return follow;
+            }
+            catch
+            {
+                return null;
+            }
+
+
+        }
+
+
+       
     }
 }
