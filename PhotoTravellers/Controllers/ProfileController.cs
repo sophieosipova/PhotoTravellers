@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PhotoTravellers.Models;
 using PhotoTravellers.Services;
+using SharedModels;
 
 namespace PhotoTravellers.Controllers
 {
@@ -143,6 +144,29 @@ namespace PhotoTravellers.Controllers
                 return Conflict();
 
             return Created("", f);
+        }
+
+
+        [HttpGet]
+        [Route("picture/{url}")]
+        [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetPicture(string url)
+        {
+            if (url == "")
+                return BadRequest();
+            try
+            {
+                var picture = await profilesService.GetPicture(url);
+
+                if (picture == null)
+                    return NotFound();
+
+                return File(picture, "image/jpeg");
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel() { StatusCode = StatusCodes.Status500InternalServerError, Message = "Не удалось подключиться к серверу" });
+            }
         }
     }
 }

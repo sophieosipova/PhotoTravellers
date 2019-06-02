@@ -1,7 +1,9 @@
-﻿using PhotoTravellers.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using PhotoTravellers.Models;
 using SharedModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,6 +21,9 @@ namespace PhotoTravellers.Services
         Task<PostModel> CreatePost(string profileId, PostModel post);
         Task<PostModel> DeletePost(string profileId, int postId);
         Task<PostModel> UpdatePost(string profileId, PostModel postToUpdate);
-        
+
+
+        Task<byte[]> GetPicture (string url);
+
     }
 }

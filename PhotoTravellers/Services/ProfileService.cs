@@ -20,13 +20,13 @@ namespace PhotoTravellers.Services
 
             this.httpClient = new HttpClient();
 
-             this.remoteServiceBaseUrl = url+ "profile";
+             this.remoteServiceBaseUrl = url;
         }
 
        
         public async Task<ProfileModel> GetProfileById(string profileId)
         {
-            var uri = $"{remoteServiceBaseUrl}/{profileId}";
+            var uri = $"{remoteServiceBaseUrl}profile/{profileId}";
 
             HttpResponseMessage response = await httpClient.GetAsync(uri);
 
@@ -50,7 +50,7 @@ namespace PhotoTravellers.Services
 
         public async Task<ProfileModel> CreateProfile(ProfileModel profile)
         {
-            var uri = $"{remoteServiceBaseUrl}";
+            var uri = $"{remoteServiceBaseUrl}/profile";
 
 
             var profileContent = new StringContent(JsonConvert.SerializeObject(profile), System.Text.Encoding.UTF8, "application/json");
@@ -75,7 +75,7 @@ namespace PhotoTravellers.Services
 
         public async Task<ProfileModel> DeleteProfile(string profileId)
         {
-            var uri = $"{remoteServiceBaseUrl}/{profileId}";
+            var uri = $"{remoteServiceBaseUrl}/profile/{profileId}";
 
 
                 var response = await httpClient.DeleteAsync(uri);
@@ -100,7 +100,7 @@ namespace PhotoTravellers.Services
 
         public async Task<ProfileModel> UpdateProfile (ProfileModel profileToUpdate)
         {
-            var uri = $"{remoteServiceBaseUrl}/{profileToUpdate.ProfileId}";
+            var uri = $"{remoteServiceBaseUrl}/profile/{profileToUpdate.ProfileId}";
 
                 var profileContent = new StringContent(JsonConvert.SerializeObject(profileToUpdate), System.Text.Encoding.UTF8, "application/json");
                 var response = await httpClient.PutAsync(uri, profileContent);
@@ -124,7 +124,7 @@ namespace PhotoTravellers.Services
 
         public async Task<List<FollowModel>> GetFollowers(string profileId)
         {
-            var uri = $"{remoteServiceBaseUrl}/{profileId}/followers";
+            var uri = $"{remoteServiceBaseUrl}/profile/{profileId}/followers";
 
             HttpResponseMessage response = await httpClient.GetAsync(uri);
 
@@ -142,7 +142,7 @@ namespace PhotoTravellers.Services
         }
         public async Task<List<FollowModel>> GetFollowings(string profileId)
         {
-            var uri = $"{remoteServiceBaseUrl}/{profileId}/followings";
+            var uri = $"{remoteServiceBaseUrl}/profile/{profileId}/followings";
 
             HttpResponseMessage response = await httpClient.GetAsync(uri);
 
@@ -162,7 +162,7 @@ namespace PhotoTravellers.Services
 
         public async Task<FollowModel> CreateFollow(string profileId, FollowModel follow)
         {
-            var uri = $"{remoteServiceBaseUrl}/{profileId}/follow";
+            var uri = $"{remoteServiceBaseUrl}/profile/{profileId}/follow";
 
 
             var followContent = new StringContent(JsonConvert.SerializeObject(follow), System.Text.Encoding.UTF8, "application/json");
@@ -184,7 +184,7 @@ namespace PhotoTravellers.Services
         }
         public async Task<FollowModel> DeleteFollow(int followId)
         {
-            var uri = $"{remoteServiceBaseUrl}/{followId}";
+            var uri = $"{remoteServiceBaseUrl}/profile/{followId}";
 
 
             var response = await httpClient.DeleteAsync(uri);
@@ -206,6 +206,22 @@ namespace PhotoTravellers.Services
             }
         }
 
+        public async Task<byte[]> GetPicture(string url)
+        {
+            var uri = $"{remoteServiceBaseUrl}picture/{url}";
+
+            HttpResponseMessage response = await httpClient.GetAsync(uri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                byte[] responseBody = await response.Content.ReadAsByteArrayAsync();
+                return responseBody;
+            }
+            else
+            {
+                throw new Exception($"{response.StatusCode}");
+            }
+        }
 
         public void Dispose()
 

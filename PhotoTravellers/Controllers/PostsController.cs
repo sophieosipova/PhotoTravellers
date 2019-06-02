@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -115,6 +116,30 @@ namespace PhotoTravellers.Controllers
                 return NotFound();
 
             return Created("", post);
+        }
+
+        [HttpGet]
+        [Route("picture/{url}")]
+        [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetPicture(string url)
+        {
+            if (url == "")
+                return BadRequest();
+
+
+            try
+            {
+                var picture = await postsService.GetPicture(url);
+
+                if (picture == null)
+                    return NotFound();
+
+                return File(picture,"image/jpeg");
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel() { StatusCode = StatusCodes.Status500InternalServerError, Message = "Не удалось подключиться к серверу" });
+            }
         }
     }
 }

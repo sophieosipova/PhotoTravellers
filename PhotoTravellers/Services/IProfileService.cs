@@ -18,5 +18,7 @@ namespace PhotoTravellers.Services
 
         Task<FollowModel> CreateFollow(string profileId, FollowModel follow);
         Task<FollowModel> DeleteFollow(int followId);
+
+        Task<byte[]> GetPicture(string url);
     }
 }

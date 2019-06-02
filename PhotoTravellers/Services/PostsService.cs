@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using PhotoTravellers.Models;
 using SharedModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -174,6 +176,22 @@ namespace PhotoTravellers.Services
 
         }
 
+        public async Task<byte[]> GetPicture(string url)
+        {
+            var uri = $"{remoteServiceBaseUrl}picture/{url}";
+
+            HttpResponseMessage response = await httpClient.GetAsync(uri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                byte [] responseBody = await response.Content.ReadAsByteArrayAsync();
+                return responseBody;
+            }
+            else
+            {
+                throw new Exception($"{response.StatusCode}");
+            }
+        }
         public void Dispose()
 
         {

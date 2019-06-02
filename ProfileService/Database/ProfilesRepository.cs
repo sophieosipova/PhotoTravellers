@@ -16,8 +16,8 @@ namespace ProfileService.Database
             this.db = context;
             if (!db.Profiles.Any())
             {
-                db.Profiles.Add(new Profile { ProfileId = "8a0a7e1b-9543-4c29-9db2-20ebad6527f7", Login = "Sophie", FirstName = "Sophie", LastName = "Osipova", BirthDate = new DateTime(1996, 09, 26) });
-                db.Profiles.Add(new Profile { ProfileId = "6e8e47f5-0d4d-4141-8716-bf1a34b5c546", Login = "Polina", FirstName = "Polina", LastName = "Osipova", BirthDate = new DateTime(1994, 06, 01) });
+                db.Profiles.Add(new Profile { ProfileId = "8a0a7e1b-9543-4c29-9db2-20ebad6527f7", Login = "Sophie", FirstName = "Sophie", LastName = "Osipova", BirthDate = new DateTime(1996, 09, 26), ImageUrl = "8a0a7e1b-9543-4c29-9db2-20ebad6527f7" });
+                db.Profiles.Add(new Profile { ProfileId = "6e8e47f5-0d4d-4141-8716-bf1a34b5c546", Login = "Polina", FirstName = "Polina", LastName = "Osipova", BirthDate = new DateTime(1994, 06, 01), ImageUrl = "6e8e47f5-0d4d-4141-8716-bf1a34b5c546" });
 
                 db.SaveChanges();
             }

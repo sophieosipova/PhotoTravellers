@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
+    <Folder Include="images\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,5 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
