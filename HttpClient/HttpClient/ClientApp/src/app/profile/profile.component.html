@@ -1,0 +1,30 @@
+<body>
+  <h1>Продукты</h1>
+  <p *ngIf="serverError"><em>{{error}}</em></p>
+  <div *ngIf="!serverError">
+    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+    <p *ngIf="!profile"><em>Loading...</em></p>
+    <div *ngIf="profile">
+      <div *ngIf="tableMode; else edit">
+
+
+      </div>
+    </div>
+  </div>
+</body>
+
+<ng-template #edit>
+  <td>
+    <input type="text" name="firstName" [(ngModel)]="profile.firstName" class="form-control" required />
+  </td>
+  <td>
+    <input type="text" name="lastName" [(ngModel)]="profile.lastName" class="form-control" required/>
+  </td>
+  <td>
+    <input type="text" name="birthDate" [(ngModel)]="profile.birthDate" class="form-control" required  />
+  </td>
+  <td>
+    <input type="button" [disabled]="carbohydrates.invalid || fat.invalid || protein.invalid || calories.invalid || productName.invalid" value="Сохранить" (click)="save()" class="btn btn-sm btn-success" />
+    <input type="button" value="Отмена" (click)="cancel()" class="btn btn-sm btn-warning" />
+  </td>
+</ng-template>
