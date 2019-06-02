@@ -20,16 +20,16 @@ namespace LocationService.Controllers
             this.locationsRepository = locationsRepository;
         }
 
-        [Route("city/{cityName}")]
+        [Route("country/{countryName}/city/{cityName}")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(List<Location>), (int)HttpStatusCode.OK)]
         //   [ProducesResponseType(typeof(PaginatedModel<Post>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetCityLocations (string cityName)
+        public async Task<IActionResult> GetCityLocations (string countryName, string cityName)
         {
             if (cityName == "")
                 return BadRequest();
 
-            var locations = await locationsRepository.GetCityLocations(cityName);
+            var locations = await locationsRepository.GetCityLocations(countryName,cityName);
 
             if (locations == null)
                 return NotFound();

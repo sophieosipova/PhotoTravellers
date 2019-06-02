@@ -127,7 +127,7 @@ namespace AuthorizationService.Controllers
 
         [HttpGet]
         [Route("user")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult<bool>> ValidateUser()
         {
             if (this.User.Identity.IsAuthenticated)
@@ -143,5 +143,40 @@ namespace AuthorizationService.Controllers
             }
             return Unauthorized();
         }
-    }
+
+
+        [HttpGet]
+        [Route("logout")]
+        public async Task<ActionResult<bool>> Logout()
+        {
+              await signInManager.SignOutAsync();           
+              return Ok(true);
+        }
+
+        [HttpGet, Route("refreshtokens")]
+        public async Task<ActionResult<UsersToken>> RefreshTokens()
+        {
+            if (this.User.Identity.IsAuthenticated)
+            {
+
+                string token = Request.Headers["Authorization"].ToString().Remove(0, 7);
+                var user = await userManager.FindByNameAsync(User.Identity.Name/*usersToken.UserName*/);
+
+                if (tokenGenerator.ValidateRefreshToken(token))
+                {
+                    var jwt = tokenGenerator.GenerateRefreshToken(user.Id, user.UserName);
+                    await userManager.UpdateAsync(user);
+                    return new UsersToken()
+                    {
+                        RefreshToken = jwt,
+                        AccessToken = tokenGenerator.GenerateAccessToken(user.Id, user.UserName),
+                        UserName = user.UserName,
+                        UserId = user.Id
+                    };
+                }
+            }
+
+            return Unauthorized();
+        }
+   }
 }

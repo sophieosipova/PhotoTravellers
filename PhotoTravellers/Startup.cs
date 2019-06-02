@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PhotoTravellers.Services;
 
 namespace PhotoTravellers
 {
@@ -26,6 +27,21 @@ namespace PhotoTravellers
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSingleton<IAutorizationService>(new AutorizationService(Configuration.GetConnectionString("AuthorizationService")));
+            services.AddSingleton<ILocationsService>(new LocationsService(Configuration.GetConnectionString("LocationsService")));
+            services.AddSingleton<IProfileService>(new ProfileService(Configuration.GetConnectionString("ProfileService")));
+            services.AddSingleton<IPostsService>(new PostsService(Configuration.GetConnectionString("PostsService")));
+            services.AddSingleton<IPhotoTravellersService, PhotoTravellersService>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                builder => builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

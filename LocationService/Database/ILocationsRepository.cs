@@ -7,7 +7,7 @@ namespace LocationService.Database
 {
     public interface ILocationsRepository
     {
-        Task<List<Location>> GetCityLocations(string cityName);
+        Task<List<Location>> GetCityLocations(string countryName, string cityName);
         Task<Location> CreateLocation(Location location);
         Task<Location> DeleteLocation(int locationId);
         Task<Location> UpdateLocation(Location locationToUpdate);

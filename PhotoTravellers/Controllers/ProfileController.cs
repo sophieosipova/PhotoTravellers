@@ -5,32 +5,32 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ProfileService.Database;
-using ProfileService.Models;
+using PhotoTravellers.Models;
+using PhotoTravellers.Services;
 
-namespace ProfileService.Controllers
+namespace PhotoTravellers.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ProfileController : ControllerBase
     {
-        private readonly IProfilesRepository profilesRepository;
+        private readonly IProfileService profilesService;
 
-        public ProfileController(IProfilesRepository profilesRepository)
+        public ProfileController(IProfileService profilesService)
         {
-            this.profilesRepository = profilesRepository;
+            this.profilesService = profilesService;
         }
 
         [HttpGet]
         [Route("{profileId}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(Profile), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ProfileModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetProfileById(string profileId)
         {
             if (profileId == "")
                 return BadRequest();
 
-            var profile = await profilesRepository.GetProfileById(profileId);
+            var profile = await profilesService.GetProfileById(profileId);
 
             if (profile != null)
                 return Ok(profile);
@@ -46,7 +46,7 @@ namespace ProfileService.Controllers
             if (profileId == "")
                 return BadRequest();
 
-            var profile = await profilesRepository.DeleteProfile(profileId);
+            var profile = await profilesService.DeleteProfile(profileId);
 
             if (profile != null)
                 return Ok(profile);
@@ -58,9 +58,9 @@ namespace ProfileService.Controllers
         [Route("{profileId}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> UpdateProfile(string userId, [FromBody] Profile profileToUpdate)
+        public async Task<IActionResult> UpdateProfile(string userId, [FromBody] ProfileModel profileToUpdate)
         {
-            var profile = await profilesRepository.UpdateProfile(profileToUpdate);
+            var profile = await profilesService.UpdateProfile(profileToUpdate);
 
             if (profile == null)
                 return NotFound();
@@ -71,9 +71,9 @@ namespace ProfileService.Controllers
         [HttpPost]
         [Route("")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateProfile(Profile profile)
+        public async Task<IActionResult> CreateProfile(ProfileModel profile)
         {
-            var p = await profilesRepository.CreateProfile(profile);
+            var p = await profilesService.CreateProfile(profile);
 
             if (p == null)
                 return Conflict();
@@ -85,13 +85,13 @@ namespace ProfileService.Controllers
         [HttpGet]
         [Route("{profileId}/followers")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(Profile), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetFollowers (string profileId)
+        [ProducesResponseType(typeof(ProfileModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetFollowers(string profileId)
         {
             if (profileId == "")
                 return BadRequest();
 
-            var followers = await profilesRepository.GetFollowers(profileId);
+            var followers = await profilesService.GetFollowers(profileId);
 
             if (followers != null)
                 return Ok(followers);
@@ -102,13 +102,13 @@ namespace ProfileService.Controllers
         [HttpGet]
         [Route("{profileId}/followings")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(Profile), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ProfileModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetFollowings(string profileId)
         {
             if (profileId == "")
                 return BadRequest();
 
-            var followers = await profilesRepository.GetFollowings(profileId);
+            var followers = await profilesService.GetFollowings(profileId);
 
             if (followers != null)
                 return Ok(followers);
@@ -124,7 +124,7 @@ namespace ProfileService.Controllers
             if (followId == 0)
                 return BadRequest();
 
-            var follow = await profilesRepository.DeleteFollow(followId);
+            var follow = await profilesService.DeleteFollow(followId);
 
             if (follow != null)
                 return Ok(follow);
@@ -135,16 +135,14 @@ namespace ProfileService.Controllers
         [HttpPost]
         [Route("{profileId}/follow")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateFolow(Follow follow)
+        public async Task<IActionResult> CreateFolow(string  profileId, FollowModel follow)
         {
-            var f = await profilesRepository.CreateFollow(follow);
+            var f = await profilesService.CreateFollow(profileId, follow);
 
             if (f == null)
                 return Conflict();
 
             return Created("", f);
         }
-
-
     }
 }

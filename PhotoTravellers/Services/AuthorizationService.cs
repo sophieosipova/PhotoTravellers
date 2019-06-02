@@ -12,7 +12,7 @@ namespace PhotoTravellers.Services
     public class AutorizationService : IAutorizationService
     {
         private readonly HttpClient httpClient;
-        private readonly string remoteServiceBaseUrl = "https://localhost:44358/api/";
+        private readonly string remoteServiceBaseUrl = "https://localhost:44304/api/authorization";
 
         public AutorizationService(/*HttpClient httpClient*/ string url)
         {
@@ -21,10 +21,11 @@ namespace PhotoTravellers.Services
             handler.AllowAutoRedirect = false;
             this.httpClient = new HttpClient(handler);
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            remoteServiceBaseUrl = url + "authorization";
         }
         public async Task<UsersToken> Login(User user)
         {
-            var uri = $"{remoteServiceBaseUrl}account";
+            var uri = $"{remoteServiceBaseUrl}";
             var userContent = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage response = await httpClient.PostAsync(uri, userContent);
 
@@ -50,7 +51,7 @@ namespace PhotoTravellers.Services
         }
         public async Task<UsersToken> RefreshTokens(UsersToken token)
         {
-            var uri = $"{remoteServiceBaseUrl}account/refreshtokens";
+            var uri = $"{remoteServiceBaseUrl}/refreshtokens";
 
             //   httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.RefreshToken}");
             //   HttpResponseMessage response = await httpClient.GetAsync(uri,);
@@ -80,9 +81,9 @@ namespace PhotoTravellers.Services
 
         }
 
-        public async Task<bool> ValidateToken(string accessToken)
+        public async Task<bool> ValidateUserToken(string accessToken)
         {
-            var uri = $"{remoteServiceBaseUrl}account/validate";
+            var uri = $"{remoteServiceBaseUrl}/user";
 
             if (accessToken == "")
                 return false;
@@ -109,20 +110,53 @@ namespace PhotoTravellers.Services
 
         }
 
-        public async Task<UsersToken> GetToken(string code, string client_secret = "secret", string client_id = "app", string redirect_uri = "https://localhost:44358/api/account")
+        public async Task<bool> ValidateAdminToken(string accessToken)
         {
+            var uri = $"{remoteServiceBaseUrl}/admin";
 
-            var uri = $"{remoteServiceBaseUrl}oauth/token?code={code}&client_secret={client_secret}&client_id={client_id}&redirect_uri={redirect_uri}";
+            if (accessToken == "")
+                return false;
+            try
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"{accessToken.Remove(0, 7)}");
+                HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
 
-            HttpResponseMessage response = await httpClient.GetAsync(uri);
+
+                response.EnsureSuccessStatusCode();
+                return true;
+            }
+            catch (HttpRequestException e)
+            {
+                return false;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            //   return false;
+
+        }
+
+      
+
+        public async Task<bool> Logout (string accessToken)
+        {
+            var uri = $"{remoteServiceBaseUrl}/logout";
+
+            //   httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.RefreshToken}");
+            //   HttpResponseMessage response = await httpClient.GetAsync(uri,);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
 
             try
             {
                 response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var usersToken = JsonConvert.DeserializeObject<UsersToken>(responseBody);
+             
 
-                return usersToken;
+                return true;
             }
             catch (HttpRequestException e)
             {
@@ -134,13 +168,8 @@ namespace PhotoTravellers.Services
                 throw e;
             }
 
-            return null;
-        }
-
-        public async Task<UsersToken> Logout (string UserId )
-        {
-            return null;
-        }
+            return false;
+        } 
 
 
     }

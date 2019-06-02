@@ -17,10 +17,11 @@ namespace LocationService.Database
             this.db = context;
             if (!db.Locations.Any())
             {
-                db.Locations.Add(new Location { LocationCity = "Минск", LocationName = "Площадь Независимости",
+                db.Locations.Add(new Location {LocationCountry = "Беларусь", LocationCity = "Минск", LocationName = "Площадь Независимости",
                     FromLongitude = 53.895556f, FromLatitude = 27.547778f,
                     ToLongitude = 53.895556f,
-                    ToLatitude = 27.547778f
+                    ToLatitude = 27.547778f,
+                    Raiting = 98
                 });
 
 
@@ -29,11 +30,11 @@ namespace LocationService.Database
         }
 
 
-        public async Task<List<Location>> GetCityLocations(string locationCity)
+        public async Task<List<Location>> GetCityLocations(string locationCountry,string locationCity)
         {
             try
             {
-                return await db.Locations.Where(l => l.LocationCity == locationCity).ToListAsync();
+                return await db.Locations.Where(l => l.LocationCity == locationCity && l.LocationCountry == locationCountry).ToListAsync();
             }
             catch
             {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LocationService.Models
+namespace PhotoTravellers.Models
 {
-    public class Location
+    public class LocationModel
     {
         public int LocationId { get; set; }
         public string LocationCountry { get; set; }

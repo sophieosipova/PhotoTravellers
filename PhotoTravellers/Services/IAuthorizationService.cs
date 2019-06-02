@@ -10,8 +10,9 @@ namespace PhotoTravellers.Services
     {
         Task<UsersToken> Login(User user);
         Task<UsersToken> RefreshTokens(UsersToken token);
-        Task<bool> ValidateToken(string accessToken);
+        Task<bool> ValidateUserToken(string accessToken);
 
-        Task<UsersToken> Logout(string UserId);
+        Task<bool> ValidateAdminToken(string accessToken);
+        Task<bool> Logout(string UserId);
     }
 }

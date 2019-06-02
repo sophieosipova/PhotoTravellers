@@ -21,7 +21,7 @@ namespace PostsService.Controllers
             this.postsRepository = postsRepository;
         }
 
-        [Route("profile/{profileId}")]
+   /*     [Route("profile/{profileId}")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(List<Post>), (int)HttpStatusCode.OK)]
      //   [ProducesResponseType(typeof(PaginatedModel<Post>), (int)HttpStatusCode.OK)]
@@ -37,7 +37,7 @@ namespace PostsService.Controllers
 
             return Ok(posts);
         }
-
+         */
 
 
         [HttpGet]
@@ -60,6 +60,54 @@ namespace PostsService.Controllers
             }
 
             var model = await postsRepository.GetProfilesPosts(profileId, pageSize, pageIndex);
+
+            if (model == null)
+                return NotFound();
+
+            return Ok(model);
+        }
+
+
+    /*    [HttpGet]
+        [Route("location/{locationId:int}")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(List<Post>), (int)HttpStatusCode.OK)]
+        //   [ProducesResponseType(typeof(PaginatedModel<Post>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetPostsFromLocation(int locationId)
+        {
+            if (locationId <= 0)
+                return BadRequest();
+
+            var posts = await postsRepository.GetPostsFromLocation(locationId);
+
+            if (posts == null)
+                return NotFound();
+
+            return Ok(posts);
+        }
+        */
+
+
+        [HttpGet]
+        [Route("location/{locationId:int}")]
+        [ProducesResponseType(typeof(List<Post>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PaginatedModel<Post>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetPostsFromLocation(int locationId, [FromQuery]int pageSize, [FromQuery]int pageIndex)
+        {
+            if (locationId <= 0)
+                return BadRequest();
+
+            if (pageSize == 0 && pageIndex == 0)
+            {
+                var posts = await postsRepository.GetPostsFromLocation(locationId);
+
+                if (posts == null)
+                    return NotFound();
+
+                return Ok(posts);
+            }
+
+            var model = await postsRepository.GetPostsFromLocation(locationId, pageSize, pageIndex);
 
             if (model == null)
                 return NotFound();

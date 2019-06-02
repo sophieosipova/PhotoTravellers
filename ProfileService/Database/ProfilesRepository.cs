@@ -16,15 +16,15 @@ namespace ProfileService.Database
             this.db = context;
             if (!db.Profiles.Any())
             {
-                db.Profiles.Add(new Profile { ProfileId = "d968f867-cd4b-4f2c-915f-fd0bba4a06ba", Login = "Sophie", FirstName = "Sophie", LastName = "Osipova", BirthDate = new DateTime(1996, 09, 26) });
-                db.Profiles.Add(new Profile { ProfileId = "asdf43dw-cd4b-4f2c-915f-fd0bba4a06ba", Login = "Polina", FirstName = "Polina", LastName = "Osipova", BirthDate = new DateTime(1994, 06, 01) });
+                db.Profiles.Add(new Profile { ProfileId = "8a0a7e1b-9543-4c29-9db2-20ebad6527f7", Login = "Sophie", FirstName = "Sophie", LastName = "Osipova", BirthDate = new DateTime(1996, 09, 26) });
+                db.Profiles.Add(new Profile { ProfileId = "6e8e47f5-0d4d-4141-8716-bf1a34b5c546", Login = "Polina", FirstName = "Polina", LastName = "Osipova", BirthDate = new DateTime(1994, 06, 01) });
 
                 db.SaveChanges();
             }
 
             if (!db.Follows.Any())
             {
-                db.Follows.Add(new Follow { FollowerId = "d968f867-cd4b-4f2c-915f-fd0bba4a06ba", FollowingId = "asdf43dw-cd4b-4f2c-915f-fd0bba4a06ba" });
+                db.Follows.Add(new Follow { FollowerId = "8a0a7e1b-9543-4c29-9db2-20ebad6527f7", FollowingId = "6e8e47f5-0d4d-4141-8716-bf1a34b5c546" });
                 db.SaveChanges();
             }
         }
@@ -45,12 +45,11 @@ namespace ProfileService.Database
         {
             var item = new Profile
             {
+                ProfileId = profile.ProfileId,
                 Login = profile.Login,
                 FirstName = profile.FirstName,
                 LastName = profile.LastName,
-                BirthDate = profile.BirthDate,
-                
-
+                BirthDate = profile.BirthDate,                
             };
 
             try
